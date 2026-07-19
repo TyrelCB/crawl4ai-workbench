@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Crawl4AI Workbench</title>
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+  <div class="orb orb-a"></div><div class="orb orb-b"></div>
+  <main>
+    <header>
+      <div class="brand"><span class="mark">C4</span><span>Crawl4AI Workbench</span></div>
+      <div id="health" class="health"><i></i> connecting</div>
+    </header>
+    <section class="hero">
+      <p class="eyebrow">LOCAL · PRIVATE · LLM-READY</p>
+      <h1>Turn any page into<br><em>clean Markdown.</em></h1>
+      <p class="lede">A focused local interface for Crawl4AI. Fetch JavaScript pages, remove clutter, and save reusable output in one pass.</p>
+    </section>
+    <section class="workspace">
+      <form id="crawl-form" class="controls">
+        <label for="url">Page URL</label>
+        <div class="url-row">
+          <input id="url" name="url" type="url" value="https://example.com" required autocomplete="url" spellcheck="false">
+          <button id="submit" type="submit"><span>Crawl page</span><b>→</b></button>
+        </div>
+        <div class="options">
+          <label class="check"><input id="fit" type="checkbox" checked><span></span>Focused Markdown</label>
+          <label class="check"><input id="cache" type="checkbox"><span></span>Use cache</label>
+          <label class="check"><input id="overlays" type="checkbox"><span></span>Remove overlays</label>
+        </div>
+      </form>
+      <div id="status" class="status hidden"><div class="spinner"></div><span>Launching Chromium and reading the page…</span></div>
+      <div id="error" class="error hidden"></div>
+      <section id="result" class="result hidden">
+        <div class="result-head">
+          <div><p class="eyebrow">CRAWL COMPLETE</p><h2 id="title">Result</h2><a id="result-url" target="_blank" rel="noopener"></a></div>
+          <button id="copy" class="secondary">Copy Markdown</button>
+        </div>
+        <div class="metrics">
+          <div><strong id="metric-time">—</strong><span>seconds</span></div>
+          <div><strong id="metric-words">—</strong><span>words</span></div>
+          <div><strong id="metric-links">—</strong><span>links</span></div>
+          <div><strong id="metric-images">—</strong><span>images</span></div>
+        </div>
+        <div class="file-pill"><span>Saved to</span><code id="output-file"></code></div>
+        <pre id="markdown"></pre>
+      </section>
+    </section>
+    <footer><span>Powered by Crawl4AI 0.9.2</span><a href="/docs">API docs ↗</a></footer>
+  </main>
+  <script src="/static/app.js"></script>
+</body>
+</html>

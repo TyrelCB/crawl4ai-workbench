@@ -1,0 +1,28 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "crawl4ai-workbench"
+version = "0.1.0"
+description = "Local browser UI, API, and CLI for Crawl4AI"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "crawl4ai==0.9.2",
+    "fastapi>=0.139.2",
+    "pydantic-settings>=2.14.2",
+    "python-multipart>=0.0.32",
+    "uvicorn[standard]>=0.51.0",
+]
+
+[project.scripts]
+crawl4ai-workbench = "crawl4ai_workbench.cli:main"
+
+[dependency-groups]
+dev = [
+    "httpx>=0.28.1",
+    "pytest>=9.1.1",
+    "pytest-asyncio>=1.4.0",
+    "ruff>=0.15.22",
+]
