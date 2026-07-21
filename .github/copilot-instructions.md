@@ -43,10 +43,12 @@ High-level architecture (big picture)
 Key repository conventions and patterns
 
 - Env vars use prefix C4AI_ and are consumed by pydantic-settings (see Settings in config.py). Examples in .env.example.
-- Default outputs folder is outputs/; service writes a timestamped stem: YYYYMMDDTHHMMSSZ-<slug>.md and matching .json metadata.
-- Overlay removal is opt-in (remove_overlays flag). If overlay removal triggers a structural false positive, the service retries once without overlay removal.
+- Default outputs folder is outputs/; service writes a timestamped stem: YYYYMMDDTHHMMSSZ-<slug>.md and matching .json metadata. When crawl_depth > 0, every crawled page gets its own .md/.json pair.
+- Crawl depth is implemented with crawl4ai.deep_crawling.BFSDeepCrawlStrategy attached to CrawlerRunConfig(deep_crawl_strategy=...). Setting stray attributes on the config object does not work; always use the real strategy.
+- Default crawl_depth is 1 (follows top-level internal links). Set to 0 for a single-page crawl. Max allowed is 5; BFS is capped at 50 pages for safety.
+- Overlay removal is opt-in (remove_overlays flag). If overlay removal triggers a structural false positive on the root page, the service retries once without overlay removal.
 - Error handling: UnsafeUrlError is raised for disallowed URLs; API converts it to HTTP 400. Other crawl errors surface as 502.
-- Tests commonly monkeypatch AsyncWebCrawler in service to avoid real browser runs; follow that pattern when writing unit tests.
+- Tests commonly monkeypatch AsyncWebCrawler in service to avoid real browser runs; FakeCrawler must return an iterable container that also exposes .success / .error_message (mimic CrawlResultContainer).
 - The project exposes a console script (project.scripts) named crawl4ai-workbench; after installation the CLI can be run directly.
 - E2E tests (tests/e2e_smoke.py) are present but optional — they require Playwright and a running local server and will write artifacts/workbench-e2e.png when run.
 
