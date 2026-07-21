@@ -47,6 +47,17 @@ async def crawl_page(request: CrawlRequest) -> CrawlResponse:
         word_count_threshold=request.word_count_threshold,
         markdown_generator=markdown_generator,
     )
+    # Propagate crawl depth when provided. Some crawl4ai versions accept max_depth/crawl_depth
+    # on the run config; setting attributes here is a best-effort bridge without relying on a
+    # specific constructor signature.
+    if getattr(request, "crawl_depth", None) is not None:
+        try:
+            setattr(run_config, "crawl_depth", request.crawl_depth)
+            setattr(run_config, "max_depth", request.crawl_depth)
+        except Exception:
+            # Best-effort only; if run_config is immutable or doesn't accept attributes, skip it.
+            pass
+
     browser_config = BrowserConfig(headless=True, verbose=False)
 
     started = time.perf_counter()

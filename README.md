@@ -18,8 +18,14 @@ Overlay removal is opt-in because aggressive DOM cleanup can remove an entire pa
 ## CLI
 
 ```bash
+# Single crawl (default: follow top-level links, depth=1)
 uv run crawl4ai-workbench crawl https://example.com
+
+# Raw output (do not prune Markdown):
 uv run crawl4ai-workbench crawl https://example.com --raw
+
+# Control link-following depth: 0 = only the provided URL, 1 = follow top-level links (default)
+uv run crawl4ai-workbench crawl https://example.com --depth 0
 ```
 
 ## API

@@ -19,6 +19,7 @@ def parser() -> argparse.ArgumentParser:
     crawl.add_argument("url")
     crawl.add_argument("--raw", action="store_true", help="Do not prune the Markdown")
     crawl.add_argument("--use-cache", action="store_true")
+    crawl.add_argument("--depth", type=int, default=None, help="Crawl link-following depth (default: model default=1)")
     return root
 
 
@@ -28,6 +29,7 @@ async def _crawl(args: argparse.Namespace) -> None:
             url=args.url,
             fit_markdown=not args.raw,
             bypass_cache=not args.use_cache,
+            crawl_depth=args.depth,
         )
     )
     print(json.dumps(result.model_dump(exclude={"markdown"}), indent=2))
