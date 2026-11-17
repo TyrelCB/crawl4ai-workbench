@@ -106,30 +106,35 @@ async def crawl_page(request: CrawlRequest) -> CrawlResponse:
     started = time.perf_counter()
     async with AsyncWebCrawler(config=browser_config) as crawler:
         container = await crawler.arun(url=url, config=run_config)
+        # arun() returns a CrawlResultContainer for single-page runs, but a
+        # plain list of CrawlResult when a deep-crawl strategy is active.
+        results = list(container)
 
         # If the root page fails due to an overlay-removal false positive, retry
         # once without overlay removal before giving up.
+        root = results[0] if results else None
         if (
-            not container.success
+            root is not None
+            and not root.success
             and request.remove_overlays
-            and _overlay_false_positive(container.error_message)
+            and _overlay_false_positive(root.error_message)
         ):
             container = await crawler.arun(
                 url=url,
                 config=run_config.clone(remove_overlay_elements=False),
             )
+            results = list(container)
     elapsed = time.perf_counter() - started
 
-    if not container.success:
-        raise RuntimeError(container.error_message or "Crawl failed")
+    if not results:
+        raise RuntimeError("Crawl produced no results")
+    root = results[0]
+    if not root.success:
+        raise RuntimeError(root.error_message or "Crawl failed")
 
     timestamp = datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ")
     output_dir = settings.output_dir.resolve()
     output_dir.mkdir(parents=True, exist_ok=True)
-
-    results = list(container)
-    if not results:
-        raise RuntimeError("Crawl produced no results")
 
     responses = [
         _result_to_response(result, request, output_dir, timestamp, elapsed / len(results))
